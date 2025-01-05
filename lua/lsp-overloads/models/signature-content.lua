@@ -5,6 +5,29 @@ local SignatureContent = {
   label_line = 0,
 }
 
+--- Removes empty lines from the beginning and end.
+--- This function is exact copy of vim.lsp.util.trim_empty_lines()
+--- which is now deprecated.
+---@param lines table list of lines to trim
+---@return table trimmed list of lines
+local function trim_empty_lines(lines)
+  local start = 1
+  for i = 1, #lines do
+    if lines[i] ~= nil and #lines[i] > 0 then
+      start = i
+      break
+    end
+  end
+  local finish = 1
+  for i = #lines, 1, -1 do
+    if lines[i] ~= nil and #lines[i] > 0 then
+      finish = i
+      break
+    end
+  end
+  return vim.list_slice(lines, start, finish)
+end
+
 --- Taken from https://github.com/neovim/neovim/blob/master/runtime/lua/vim/lsp/util.lua#L896
 --- Convert a signature help to markdown lines with slight modification to display the Overloads count
 ---@param signature_help
@@ -139,7 +162,7 @@ function SignatureContent:add_content(signature)
 
   self.contents, self.active_hl = convert_signature_help_to_markdown_lines(signature, ft, triggers)
 
-  self.contents = vim.lsp.util.trim_empty_lines(self.contents)
+  self.contents = trim_empty_lines(self.contents)
   if vim.tbl_isempty(self.contents) then
     if signature.config.silent ~= true then
       print("No signature help available")
