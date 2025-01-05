@@ -109,7 +109,7 @@ M.open_signature = function(clients, bypass_trigger)
   end
 
   if triggered then
-    local params = vim.lsp.util.make_position_params()
+    local params = vim.lsp.util.make_position_params(0, 'utf-8')
     vim.lsp.buf_request(
       0,
       "textDocument/signatureHelp",
