@@ -38,6 +38,14 @@ local function convert_signature_help_to_markdown_lines(signature_help, ft, trig
   end
   vim.list_extend(contents, vim.split(label, "\n", { plain = true, trimempty = true }))
 
+  -- This is the modification to display the Overloads count
+  if #signature_help.signatures > 1 then
+    vim.list_extend(
+      contents,
+      { "(Overload " .. active_signature + 1 .. " of " .. #signature_help.signatures .. ")", "" }
+    )
+  end
+
   if signature.documentation then
     -- if LSP returns plain string, we treat it as plaintext. This avoids
     -- special characters like underscore or similar from being interpreted
@@ -46,14 +54,6 @@ local function convert_signature_help_to_markdown_lines(signature_help, ft, trig
       signature.documentation = { kind = "plaintext", value = signature.documentation }
     end
     vim.lsp.util.convert_input_to_markdown_lines(signature.documentation, contents)
-  end
-
-  -- This is the modification to display the Overloads count
-  if #signature_help.signatures > 1 then
-    vim.list_extend(
-      contents,
-      { "(Overload " .. active_signature + 1 .. " of " .. #signature_help.signatures .. ")", "" }
-    )
   end
 
   if signature.parameters and #signature.parameters > 0 then
